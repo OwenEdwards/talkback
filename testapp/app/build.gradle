@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion "android-24"
-    buildToolsVersion "23.0.2"
+    buildToolsVersion "28.0.3"
 
     defaultConfig {
         applicationId "com.android.talkbacktests"
@@ -19,11 +19,20 @@ android {
     }
 }
 
+// From https://stackoverflow.com/a/50784675
+allprojects {
+    repositories {
+        jcenter()
+        maven {
+            url "https://maven.google.com"
+        }
+    }
+}
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:24.0.0'
-    compile 'com.android.support:support-v4:24.0.0'
-    compile 'com.android.support:preference-v7:24.0.0'
-    compile 'com.android.support:preference-v14:24.0.0'
-    compile 'com.android.support:design:24.0.0'
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.support:appcompat-v7:24.0.0'
+    implementation 'com.android.support:support-v4:24.0.0'
+    implementation 'com.android.support:preference-v7:24.0.0'
+    implementation 'com.android.support:preference-v14:24.0.0'
+    implementation 'com.android.support:design:24.0.0'
 }
