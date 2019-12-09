@@ -214,6 +214,7 @@
     <string name="number_picker_title">Hour and Minute Picker</string>
     <string name="hours_label">Hours</string>
     <string name="minutes_label">Minutes</string>
+    <string name="picker_label_content_description">Use the following picker control to change the value</string>
 
     <!-- ViewGroupingTest -->
     <string name="view_group_title">Example Title</string>

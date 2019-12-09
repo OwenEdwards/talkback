@@ -65,15 +65,18 @@ public class ValuePickerTest extends BaseTestContent implements View.OnClickList
         npMinute.setWrapSelectorWheel(true);
         npMinute.setOnValueChangedListener(this);
 
+        // Set contentDescription for the label, to associate it with the picker below it,
+        //  and the contentDescription for the picker, which isn't actually used by TalkBack
+        //  so we use it when the value of the picker is changed (below)
         TextView hourLabel = (TextView) pickerDurationView.findViewById(R.id.test_duration_picker_hour_label);
-        hourLabel.setContentDescription(hourLabel.getText() + ". Use the following picker control to change the value");
+        hourLabel.setContentDescription(hourLabel.getText() + ". " + getString(R.string.picker_label_content_description));
         npHour.setContentDescription(hourLabel.getText());
 
         TextView minuteLabel = (TextView) pickerDurationView.findViewById(R.id.test_duration_picker_minute_label);
-        minuteLabel.setContentDescription(minuteLabel.getText() + ". Use the following picker control to change the value");
+        minuteLabel.setContentDescription(minuteLabel.getText() + ". " + getString(R.string.picker_label_content_description));
         npMinute.setContentDescription(minuteLabel.getText());
 
-        // Setting a LabelFor or LabeledBy for a NumberPicker doesn't seem to work...
+        // Setting a LabelFor (in the layout XML) or LabeledBy (here) for a NumberPicker doesn't seem to work:
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
             final View fHoursLabel = hourLabel;
             View.AccessibilityDelegate hoursDelegate = new View.AccessibilityDelegate() {
@@ -141,7 +144,8 @@ public class ValuePickerTest extends BaseTestContent implements View.OnClickList
 
     @Override
     public void onValueChange(NumberPicker numberPicker, int oldVal, int newVal) {
-        // Since labeling a NumberPicker doesn't seem to work, announce the new value and the label (stored as the ContentDescription of the NumberPicker)
+        // Since labeling a NumberPicker doesn't seem to work, announce the new value and the label
+        // (the label is stored as the ContentDescription of the NumberPicker)
         numberPicker.announceForAccessibility(newVal + " " + numberPicker.getContentDescription());
     }
 }
