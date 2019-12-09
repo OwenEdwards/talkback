@@ -17,38 +17,26 @@
 package com.android.talkbacktests.testsession;
 
 import android.app.AlertDialog;
-import android.app.DatePickerDialog;
-import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.DatePicker;
+import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.NumberPicker;
 import android.widget.TextView;
-import android.widget.TimePicker;
 
 import com.android.talkbacktests.R;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-
 public class ValuePickerTest extends BaseTestContent implements View.OnClickListener,
-        DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener,
-        NumberPicker.OnValueChangeListener {
+        NumberPicker.OnValueChangeListener, DialogInterface.OnClickListener {
 
-    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("EEEE, MMMM d, yyyy");
-    private static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("hh:mm a");
-
-    private DatePickerDialog mDatePickerDialog;
-    private TimePickerDialog mTimePickerDialog;
     private AlertDialog mNumberPickerDialog;
 
-    private TextView mDateSummary;
-    private TextView mTimeSummary;
-    private TextView mNumberSummary;
-
-    private Calendar mCalendar;
+    private TextView mDurationSummary;
+    private NumberPicker npHour;
+    private NumberPicker npMinute;
 
     public ValuePickerTest(Context context, String subtitle, String description) {
         super(context, subtitle, description);
@@ -56,39 +44,74 @@ public class ValuePickerTest extends BaseTestContent implements View.OnClickList
 
     @Override
     public View getView(final LayoutInflater inflater, ViewGroup container, Context context) {
-        mCalendar = Calendar.getInstance();
-
         View view = inflater.inflate(R.layout.test_value_picker, container, false);
-        view.findViewById(R.id.test_date_picker_button).setOnClickListener(this);
-        view.findViewById(R.id.test_time_picker_button).setOnClickListener(this);
         view.findViewById(R.id.test_number_picker_button).setOnClickListener(this);
-        mDateSummary = (TextView) view.findViewById(R.id.test_date_picker_description);
-        mTimeSummary = (TextView) view.findViewById(R.id.test_time_picker_description);
-        mNumberSummary = (TextView) view.findViewById(R.id.test_number_picker_description);
-        mDatePickerDialog = new DatePickerDialog(context, this,
-                mCalendar.get(Calendar.YEAR),
-                mCalendar.get(Calendar.MONTH),
-                mCalendar.get(Calendar.DAY_OF_MONTH));
-        mTimePickerDialog = new TimePickerDialog(context, this,
-                mCalendar.get(Calendar.HOUR_OF_DAY),
-                mCalendar.get(Calendar.MINUTE),
-                false);
+        mDurationSummary = (TextView) view.findViewById(R.id.test_number_picker_description);
 
-        mDateSummary.setText(DATE_FORMAT.format(mCalendar.getTime()));
-        mTimeSummary.setText(TIME_FORMAT.format(mCalendar.getTime()));
-        mNumberSummary.setText("0");
+        mDurationSummary.setText("(no duration specified)");
 
-        NumberPicker np = new NumberPicker(context);
-        np.setMaxValue(100);
-        np.setMinValue(0);
-        np.setValue(0);
-        np.setWrapSelectorWheel(false);
-        np.setOnValueChangedListener(this);
+        View pickerDurationView = inflater.inflate(R.layout.test_value_picker_duration, container, false);
+        npHour = (NumberPicker) pickerDurationView.findViewById(R.id.test_duration_picker_hour_picker);
+        npHour.setMaxValue(12);
+        npHour.setMinValue(0);
+        npHour.setValue(0);
+        npHour.setWrapSelectorWheel(false);
+        npHour.setOnValueChangedListener(this);
 
+        npMinute = (NumberPicker) pickerDurationView.findViewById(R.id.test_duration_picker_minute_picker);
+        npMinute.setMaxValue(59);
+        npMinute.setMinValue(0);
+        npMinute.setValue(0);
+        npMinute.setWrapSelectorWheel(true);
+        npMinute.setOnValueChangedListener(this);
+
+        TextView hourLabel = (TextView) pickerDurationView.findViewById(R.id.test_duration_picker_hour_label);
+        hourLabel.setContentDescription(hourLabel.getText() + ". Use the following picker control to change the value");
+        npHour.setContentDescription(hourLabel.getText());
+
+        TextView minuteLabel = (TextView) pickerDurationView.findViewById(R.id.test_duration_picker_minute_label);
+        minuteLabel.setContentDescription(minuteLabel.getText() + ". Use the following picker control to change the value");
+        npMinute.setContentDescription(minuteLabel.getText());
+
+        // Setting a LabelFor or LabeledBy for a NumberPicker doesn't seem to work...
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            final View fHoursLabel = hourLabel;
+            View.AccessibilityDelegate hoursDelegate = new View.AccessibilityDelegate() {
+                @Override
+                public void onInitializeAccessibilityNodeInfo(View host,
+                                                              AccessibilityNodeInfo info) {
+                    super.onInitializeAccessibilityNodeInfo(host, info);
+                    info.setLabeledBy(fHoursLabel);
+                }
+            };
+            npHour.setAccessibilityDelegate(hoursDelegate);
+            final View fMinutesLabel = minuteLabel;
+            View.AccessibilityDelegate minutesDelegate = new View.AccessibilityDelegate() {
+                @Override
+                public void onInitializeAccessibilityNodeInfo(View host,
+                                                              AccessibilityNodeInfo info) {
+                    super.onInitializeAccessibilityNodeInfo(host, info);
+                    info.setLabeledBy(fMinutesLabel);
+                }
+            };
+            npMinute.setAccessibilityDelegate(minutesDelegate);
+        } else {
+            TextView warning = (TextView) view.findViewById(R.id.test_label_warning);
+            warning.setText(getString(R.string.min_api_level_warning,
+                    Build.VERSION_CODES.JELLY_BEAN_MR1,
+                    Build.VERSION.SDK_INT));
+            hourLabel.setEnabled(false);
+            npHour.setEnabled(false);
+            minuteLabel.setEnabled(false);
+            npMinute.setEnabled(false);
+        }
+
+        // Create the actual picker dialog as an AlertDialog
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(R.string.number_picker_title);
-        builder.setView(np);
-        builder.setNeutralButton(R.string.alert_ok_button, null);
+        builder.setView(pickerDurationView);
+        builder.setPositiveButton(R.string.alert_ok_button, this);
+        builder.setNegativeButton(R.string.alert_cancel_button, this);
         mNumberPickerDialog = builder.create();
         return view;
     }
@@ -96,12 +119,6 @@ public class ValuePickerTest extends BaseTestContent implements View.OnClickList
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.test_date_picker_button:
-                mDatePickerDialog.show();
-                break;
-            case R.id.test_time_picker_button:
-                mTimePickerDialog.show();
-                break;
             case R.id.test_number_picker_button:
                 mNumberPickerDialog.show();
                 break;
@@ -109,20 +126,22 @@ public class ValuePickerTest extends BaseTestContent implements View.OnClickList
     }
 
     @Override
-    public void onDateSet(DatePicker datePicker, int year, int month, int date) {
-        mCalendar.set(year, month, date);
-        mDateSummary.setText(DATE_FORMAT.format(mCalendar.getTime()));
-    }
+    public void onClick(DialogInterface di, int button) {
+        switch (button) {
+            case DialogInterface.BUTTON_POSITIVE:
+                mDurationSummary.setText(npHour.getValue() + " " + npHour.getContentDescription() + " , " + npMinute.getValue() + " " + npMinute.getContentDescription());
+                mDurationSummary.announceForAccessibility("Debug: Value set to: " + npHour.getValue() + " " + npHour.getContentDescription() + " , " + npMinute.getValue() + " " + npMinute.getContentDescription());
+                break;
 
-    @Override
-    public void onTimeSet(TimePicker timePicker, int hour, int minute) {
-        mCalendar.set(Calendar.HOUR_OF_DAY, hour);
-        mCalendar.set(Calendar.MINUTE, minute);
-        mTimeSummary.setText(TIME_FORMAT.format(mCalendar.getTime()));
+            case DialogInterface.BUTTON_NEGATIVE:
+                mDurationSummary.announceForAccessibility("Debug: Dialog cancelled - hours and minutes not updated");
+                break;
+        }
     }
 
     @Override
     public void onValueChange(NumberPicker numberPicker, int oldVal, int newVal) {
-        mNumberSummary.setText(newVal + "");
+        // Since labeling a NumberPicker doesn't seem to work, announce the new value and the label (stored as the ContentDescription of the NumberPicker)
+        numberPicker.announceForAccessibility(newVal + " " + numberPicker.getContentDescription());
     }
 }

@@ -210,8 +210,10 @@
     <!-- ValuePickerTest -->
     <string name="date_picker_button">Date</string>
     <string name="time_picker_button">Time</string>
-    <string name="number_picker_button">Number</string>
-    <string name="number_picker_title">Number Picker</string>
+    <string name="number_picker_button">Hours and Minutes</string>
+    <string name="number_picker_title">Hour and Minute Picker</string>
+    <string name="hours_label">Hours</string>
+    <string name="minutes_label">Minutes</string>
 
     <!-- ViewGroupingTest -->
     <string name="view_group_title">Example Title</string>

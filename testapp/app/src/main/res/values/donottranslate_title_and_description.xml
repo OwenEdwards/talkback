@@ -40,7 +40,7 @@
     <string name="headings_session_description">Section headers inside collections</string>
 
     <string name="value_pickers_session_title">Pickers</string>
-    <string name="value_pickers_session_description">Date picker, time picker and number picker</string>
+    <string name="value_pickers_session_description">Hours/minutes picker</string>
 
     <string name="alerts_session_title">Alerts</string>
     <string name="alerts_session_description">Alert dialog</string>
@@ -154,7 +154,7 @@
     <string name="section_header_test_description"><![CDATA[ With TalkBack: swipe between items, listen to feedback. Accessibility implemented via <a href="https://developer.android.com/reference/android/view/accessibility/AccessibilityNodeInfo.CollectionItemInfo.html#isHeading()">isHeading method</a>. ]]></string>
 
     <string name="value_picker_test_subtitle">Value Pickers</string>
-    <string name="value_picker_test_description">Date Picker, Time Picker &amp; Number Picker. With TalkBack: swipe between items, double-tap to activate, choose OK to complete date or time entry.</string>
+    <string name="value_picker_test_description">Hours and minutes time duration picker. With TalkBack: swipe between items, double-tap to activate, choose OK to complete time duration entry.</string>
 
     <string name="alert_dialog_test_subtitle">Alert Dialog</string>
     <string name="alert_dialog_test_description">With TalkBack: swipe to the dialog, double-tap to activate, listen to feedback, explore dialog.</string>
