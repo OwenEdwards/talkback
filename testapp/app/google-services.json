@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "434102511563",
+    "firebase_url": "https://talkback-testapp.firebaseio.com",
+    "project_id": "talkback-testapp",
+    "storage_bucket": "talkback-testapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:434102511563:android:88e5b1b2482e8601c0784e",
+        "android_client_info": {
+          "package_name": "com.android.talkbacktests"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "434102511563-lnoa0ghk2gjst07akr8so3e53d8tb8vi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDgzH9H1jFgh2wHdiPWHBKLlc7zeeN-wAc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "434102511563-lnoa0ghk2gjst07akr8so3e53d8tb8vi.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
